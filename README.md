@@ -10,12 +10,13 @@ Python based tool, that has ability to check, if specific JPEG file has a chance
 
 ## Usage
 To run python script, you need to type
-```sh
+```
 python stegochecker.py -f “stego_data/1.jpg”
 ```
 
 ### Example output:
-```# ==================== File 1.jpg ==================== #
+```
+# ==================== File 1.jpg ==================== #
 - Path: stego_data/1.jpg
 - Image size: 587 B
 - Photo is clean probability: 34%

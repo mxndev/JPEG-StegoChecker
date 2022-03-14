@@ -1,0 +1,8 @@
+README.md
+jpeg_toolbox.py
+jpeg_toolbox_extension.c
+setup.py
+jpeg_toolbox.egg-info/PKG-INFO
+jpeg_toolbox.egg-info/SOURCES.txt
+jpeg_toolbox.egg-info/dependency_links.txt
+jpeg_toolbox.egg-info/top_level.txt
