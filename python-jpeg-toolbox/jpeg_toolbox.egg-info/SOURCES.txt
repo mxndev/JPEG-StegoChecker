@@ -1,3 +1,4 @@
+LICENSE.txt
 README.md
 jpeg_toolbox.py
 jpeg_toolbox_extension.c

@@ -1,4 +1,4 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.1
 Name: jpeg-toolbox
 Version: 1.0
 Summary: The JPEG Toolbox for Python
@@ -6,5 +6,8 @@ Home-page: https://github.com/daniellerch/python-jpeg-toolbox
 Author: Daniel Lerch
 Author-email: dlerch@gmail.com
 License: UNKNOWN
-Description: UNKNOWN
 Platform: UNKNOWN
+License-File: LICENSE.txt
+
+UNKNOWN
+
