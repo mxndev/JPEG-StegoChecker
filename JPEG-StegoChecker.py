@@ -4,6 +4,12 @@ import sys, getopt, os
 import jpeg_toolbox
 from scipy.fftpack import dct, idct
 from scipy.signal import convolve2d
+from enum import Enum
+
+class ModelType(Enum):
+    JUNIWARD = 1
+    NSF5 = 2
+    UERD = 3
 
 
 def conv2(x, y, mode='same'):
@@ -110,8 +116,13 @@ def DCTR(jpeg_info=None, qf=75.0):
     return F
 
 
-def predictLoadedImage(input_dctr):
-    model = keras.models.load_model('dctr_model')
+def predictLoadedImage(input_dctr, model_type):
+    if model_type is ModelType.JUNIWARD:
+        model = keras.models.load_model('dctr_model_juniward')
+    elif model_type is ModelType.NSF5:
+        model = keras.models.load_model('dctr_model_nsf5')
+    else:
+        model = keras.models.load_model('dctr_model_uerd')
     return model.predict(np.array((input_dctr,)))
 
 
@@ -131,13 +142,16 @@ for opt, arg in opts:
         print("Loading and processing file " + arg + "...")
         jpeginfo = jpeg_toolbox.load(arg)
         dctr = DCTR(jpeginfo)
-        cleanPossibility = predictLoadedImage(dctr)
+        jUniwardPossibility = predictLoadedImage(dctr, ModelType.JUNIWARD)
+        nsF5Possibility = predictLoadedImage(dctr, ModelType.NSF5)
+        uerdPossibility = predictLoadedImage(dctr, ModelType.UERD)
         print("# ==================== File " + arg + " ==================== #")
         print("Image resolution: " + str(jpeginfo["image_width"]) + "x" + str(jpeginfo["image_height"]))
         print("Image size: " + str(os.path.getsize(arg)) + " bytes")
-        print("Photo is clean probability: " + str(cleanPossibility[0][0]*100) + "%")
-        print("Photo has hidden data probability: " + str(((1-cleanPossibility[0][0])*100)) + "%")
-        print("Check result: " + (cleanPossibility[0][0] < 0.5 and "hidden data detected" or "image clean"))
+        print("Photo has hidden data by jUniward algorithm probability: " + str(round(jUniwardPossibility[0][0] * 100, 2)) + "%")
+        print("Photo has hidden data by nsF5 algorithm probability: " + str(round(nsF5Possibility[0][0] * 100, 2)) + "%")
+        print("Photo has hidden data by UERD algorithm probability: " + str(round(uerdPossibility[0][0] * 100, 2)) + "%")
+        print("Which algorithms probably was used on this image: " + (jUniwardPossibility[0][0] > 0.5 and "jUniward" or "") + ((jUniwardPossibility[0][0] > 0.5 and nsF5Possibility[0][0] > 0.5) and ", " or "") + (nsF5Possibility[0][0] > 0.5 and "nsF5" or "") + (((jUniwardPossibility[0][0] > 0.5 and uerdPossibility[0][0] > 0.5) or (nsF5Possibility[0][0] > 0.5 and uerdPossibility[0][0] > 0.5)) and ", " or "") + (uerdPossibility[0][0] > 0.5 and "UERD" or "") + ((jUniwardPossibility[0][0] < 0.5 and nsF5Possibility[0][0] < 0.5 and uerdPossibility[0][0] < 0.5) and "none" or ""))
         print("# " + ("=" * (len(arg)+47)) + " #")
         sys.exit()
     else:
